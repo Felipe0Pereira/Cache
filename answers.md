@@ -1,13 +1,25 @@
-# Exercise 1
-* `w01-byte` bytes/second: 4236 
-* `w02-byte` bytes/second: 929203 
-* `w03-byte` bytes/second: 2,97994*10⁷ 
+# Exercício 1
+* `w01-byte` bytes/segundo: 4236 
+* `w02-byte` bytes/segundo: 929203 
+* `w03-byte` bytes/segundo: 2,97994*10⁷ 
 
-# Exercise 2
-### Scenario 1:
-* How many array elements can fit into a cache block?
- 	2 elementos pois cada elemento é um inteiro de 4 bytes e cada bloco tem tamanho de 8 bytes
-* What combination of parameters is producing the hit rate you observe? Think about the sizes of each of the parameters.
+# Exercício 2
+### Cenário 1:
+* Quantos elementos de vetor cabem em um bloco da cache?
+ 	2 elementos pois cada elemento é um inteiro de 4 bytes e cada bloco tem tamanho de 8 bytes.
+* Que combinação de parâmetros está produzindo o hit rate que você observou? Pense sobre os valores de cada parâmetro.
+	Dados os parâmetros do cenário:
+Parâmetros do Programa:
+    Tamanho do Array: 128 bytes
+    Step Size: 1
+    Rep Count: 2
+    Opção: 0 (apenas escrita)
+Parâmetros da Cache:
+    Níveis de Cache: 1
+    Tamanho do Bloco: 8
+    Número de Blocos: 1
+    Política de Posicionamento: Mapeamento Direto
+    Política de Substituição de Bloco: LRU
 	Nesse cenário o stepSize = 1 e repCount = 2 resultaram em um hit rate = 0,5 porque cada bloco da cache pode armazenar apenas 2 
 	elementos do vetor e a cache possui somente um bloco neste caso, na primeira varredura pelo vetor, o algoritmo tenta acessar a 
 	primeira posição do vetor, mas, como o elemento ainda não está na cache, ocorre um miss, e o bloco correspondente é carregado 
@@ -19,15 +31,27 @@
 	começa pelo inicio do vetor. Por isso, a cache precisa recarregar os elementos buscados na cache, mantendo o mesmo padrão 
 	de alternância entre misses e hits que ocorreu na primeira varredura pelo vetor e preservando o hit rate = 0,5 mesmo com a repetição.
 
-* What is our hit rate if we increase Rep Count arbitrarily? Why?
-	O hit rate permanecerá em 0,5, pois a cache possui apenas 1 bloco, capaz de armazenar apenas dois elementos do vetor. 
+* Qual é o hit rate se almentarmos o Rep Count arbitrariamente? Por que?
+
+  	Com os memos parametros apresentados acima o hit rate permanecerá em 0,5, pois a cache possui apenas 1 bloco, capaz de armazenar apenas dois elementos do vetor. 
 	Para qualquer vetor com tamanho maior que 2, cada varredura pelo vetor (Rep Count) resultará em um padrão fixo: uma iteração 
 	que causa um miss, seguida por uma iteração que causa um hit (o elemento seguinte foi carregado na memória após o miss). 
 	Esse comportamento se mantem independentemente do número de repetições, resultando consistentemente em um hit rate de 0,5.
 
-### Scenario 2:
-* What combination of parameters is producing the hit rate you observe? Think about the sizes of each of the parameters.
-	A cache possui apenas 1 bloco, capaz de armazenar apenas 2 elementos do vetor. Com um stepSize = 27 e um tamanho de vetor de 32 elementos, 
+### Cenário 2:
+* Qual combinação de parâmetros esta produzindo o hit rate observado? Pense sobre os valores de cada paâmetro.
+Parâmetros do Programa:
+    Tamanho do Array: 128 bytes
+    Step Size: 27
+    Rep Count: 2
+    Opção: 0 (apenas escrita)
+Parâmetros da Cache:
+    Níveis de Cache: 1
+    Tamanho do Bloco: 8
+    Número de Blocos: 1
+    Política de Posicionamento: Mapeamento Direto
+    Política de Substituição de Bloco: LRU
+	A cache possui apenas 1 bloco neste cenário, capaz de armazenar apenas 2 elementos do vetor. Com um stepSize = 27 e um tamanho de vetor de 32 elementos, 
 	na primeira varredura pelo vetor, cada iteração resulta em um miss, já que o passo é maior do que a quantidade de elementos que a cache pode 
 	conter, ao acessar o primeiro elemento do vetor ocorre um miss e são carregados o primeiro e segundo elemento no bloco da cache devido a politica 
 	de write-alloc, o próximo acesso gera outro miss onde são carregados o vigésimo sétimo e vigésimo oitavo elementos do vetor e assim acaba a 
@@ -35,18 +59,27 @@
 	do vetor, então os dados buscados terão que ser novamente carregados na cache. Isso recria a mesma situação da primeira varredura, onde todos os 
 	acessos também geram misses. Portanto, o hit rate é 0, já que não há acessos atendidos pela cache.
 
-* What happens to our hit rate if we increase the number of blocks and why?
+* O que acontece com o hit rate se aumentarmos o número de blocos e por quê?
 	Para qualquer cache com mais de 1 bloco, haverá 2 misses e 2 hits. As faltas ocorrem durante a primeira varredura pelo vetor, pois, na primeira iteração, 
 	o início do vetor é acessado e, como a cache está vazia, ocorre um miss. O primeiro e segundo elemento é então carregado na cache devido à política de 
 	write-allocate. Em seguida, o algoritmo salta 27 elementos e acessa o vetor novamente, gerando outro miss, com o vigésimo sétimo e vigésimo oitavo elementos 
 	sendo armazenado em outro bloco da cache. Após isso, a primeira varredura termina.
 	Na segunda varredura pelo vetor, como os blocos da cache já contêm os valores necessários, cada acesso resulta em um hit. Como o vetor possui 32 elementos, 
 	a segunda varredura é atendida inteiramente pela cache. Dessa forma, o hit rate é de 0,5, já que metade dos acessos (2 de 4) foram hits.
-### Scenario 3:
-* Choose a `number of blocks` greater than `1` and determine the smallest `block size` that uses every block *and* maximizes the hit rate given the parameters above. Explain why.
-Number of blocks: 4
-Block Size: 32
-	Cada bloco pode armazenar 8 elementos do vetor pois cada elemento é um inteirro de 4 bytes e cada bloco tem tamanhode 32 bytes (32 / 4 = 8 elementos), 
+### Cenário 3:
+* Escolha `um número de blocos` maior do que `1` e determine o menor `tamanho do bloco` que usa todos os blocos *e* maximiza o hit rate dado os parâmetros abaixo. Explique o por quê.
+Parâmetros do Programa:
+    Tamanho do Array: 256 bytes
+    Step Size: 2
+    Rep Count: 2
+    Opção: 1 (escrita e leitura a cada iteração)
+Parâmetros da Cache:
+    Níveis de Cache: 1
+    Tamanho do Bloco: 32
+    Número de Blocos: 4
+    Política de Posicionamento: Mapeamento Direto
+    Política de Substituição de Bloco: LRU
+	Usando esses parâmetros cada bloco pode armazenar 8 elementos do vetor pois cada elemento é um inteirro de 4 bytes e cada bloco tem tamanhode 32 bytes (32 / 4 = 8 elementos), 
 	de forma que os 4 blocos da cache conseguem conter todos os 64 elementos do vetor neste cenário. Na primeira varredura pelo vetor, o acesso ao primeiro 
 	elemento gera um miss, e, pela política de write-allocate, os 8 primeiros elementos do vetor são carregados na cache. Em seguida, devido ao option = 1, 
 	ocorre também uma leitura do primeiro elemento, gerando um hit.
@@ -56,8 +89,8 @@ Block Size: 32
 	Na segunda varredura, como todos os elementos necessários já estão na cache, cada iteração gera 2 acessos, em que cada acesso gera hit, até que o algoritmo termine.
 	Dessa forma, o hit rate neste cenário em que há duas repetições (varreduras pelo vetor) é de 0,875, o maior possível para o menor tamanho de bloco (8 elementos) 
 	em uma cache de 4 blocos, onde todos os blocos são utilizados.
-# Exercise 3
-* Order the functions from fastest to slowest, and explain why each function's ranking makes sense using your understanding of how the cache works. Some functions might have similar runtimes. If this is the case, explain why.
+# Exercício 3
+* Ordene as funções da mais rápida para a mais lenta e explique por que a classificação de cada função faz sentido com base no seu entendimento de como a cache funciona. Algumas funções podem ter tempos de execução similares. Se for esse o caso, explique por quê.
 
 # Desempenho das Funções de Multiplicação de Matrizes
 
