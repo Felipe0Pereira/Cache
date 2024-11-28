@@ -58,4 +58,49 @@ Block Size: 32
 	em uma cache de 4 blocos, onde todos os blocos são utilizados.
 # Exercise 3
 * Order the functions from fastest to slowest, and explain why each function's ranking makes sense using your understanding of how the cache works. Some functions might have similar runtimes. If this is the case, explain why.
-<!-- Fill this in -->
+
+# Desempenho das Funções de Multiplicação de Matrizes
+
+As funções foram ordenadas com base no desempenho (GFLOP/s) obtido na execução com \(n = 1000\):
+
+1. **jki**: 0.611 GFLOP/s
+2. **kji**: 0.595 GFLOP/s
+3. **ijk**: 0.513 GFLOP/s
+4. **jik**: 0.453 GFLOP/s
+5. **kij**: 0.200 GFLOP/s
+6. **ikj**: 0.197 GFLOP/s
+
+## Explicação do Desempenho
+
+O desempenho de cada função depende diretamente de como os elementos das matrizes \(A\), \(B\) e \(C\) são acessados na memória. Isso é determinado pela localidade espacial e temporal no uso do cache.
+
+### Motivo do Alto Desempenho das Funções Rápidas (**jki** e **kji**)
+
+- **jki**: O loop externo \(j\) garante que os elementos da matriz \(B[k+j*n]\) sejam acessados de maneira sequencial (bom uso da localidade espacial). O loop intermediário \(k\) mantém \(A[i+k*n]\) fixo por mais tempo, aproveitando o cache.
+- **kji**: O loop externo \(k\) varia enquanto \(j\) mantém \(B[k+j*n]\) acessado sequencialmente. Apesar de ser eficiente, o acesso a \(A[i+k*n]\) é menos otimizado em comparação com **jki**.
+
+### Desempenho Médio (**ijk** e **jik**)
+
+- **ijk**: \(B[k+j*n]\) é acessado de maneira razoável, mas não tão eficiente quanto as funções mais rápidas.
+- **jik**: O loop externo \(j\) favorece \(B[k+j*n]\), mas os acessos à matriz \(A[i+k*n]\) são menos eficientes.
+
+### Motivo do Baixo Desempenho (**kij** e **ikj**)
+
+- **kij**: O loop externo \(k\) varia com muita frequência, quebrando a continuidade do acesso à matriz \(B[k+j*n]\).
+- **ikj**: O loop intermediário \(k\) e o loop interno \(j\) causam acessos não sequenciais em \(B[k+j*n]\), resultando em muitos **cache misses**.
+
+## Impacto do Cache no Desempenho
+
+As funções mais rápidas aproveitam a hierarquia de memória de maneira eficiente, acessando os dados sequencialmente e reduzindo o número de acessos à memória principal. Abaixo, uma tabela resumo com os motivos do desempenho:
+
+| **Ordem**  | **Motivo do Desempenho** |
+|------------|--------------------------|
+| **jki**    | Melhor localidade espacial em \(B[k+j*n]\) e \(A[i+k*n]\). |
+| **kji**    | Boa localidade espacial em \(B[k+j*n]\), mas menos eficiente em \(A[i+k*n]\). |
+| **ijk**    | Localidade razoável, mas com limitações para acesso a \(B[k+j*n]\). |
+| **jik**    | Localidade razoável para \(B[k+j*n]\), mas com menos eficiência em \(A[i+k*n]\). |
+| **kij**    | Quebra de localidade em \(B[k+j*n]\), resultando em muitos **cache misses**. |
+| **ikj**    | Pouca localidade tanto em \(B[k+j*n]\) quanto em \(A[i+k*n]\). |
+
+As diferenças no desempenho entre as funções são causadas principalmente pelo aproveitamento (ou não) da hierarquia de memória. Funções que exploram a localidade espacial de \(B[k+j*n]\) e \(A[i+k*n]\) têm desempenho superior. Já as funções com acessos aleatórios à memória sofrem penalidades devido aos altos custos de **cache misses**.
+
