@@ -23,7 +23,7 @@ Dados os parâmetros do cenário:
 
 **Parâmetros da Cache:**  
 - Níveis de Cache: 1  
-- Tamanho do Bloco: 8  
+- Tamanho do Bloco: 8 bytes 
 - Número de Blocos: 1  
 - Política de Posicionamento: Mapeamento Direto  
 - Política de Substituição de Bloco: LRU  
@@ -54,7 +54,7 @@ Para qualquer vetor com tamanho maior que 2, cada varredura pelo vetor (**Rep Co
 
 **Parâmetros da Cache:**  
 - Níveis de Cache: 1  
-- Tamanho do Bloco: 8  
+- Tamanho do Bloco: 8 bytes
 - Número de Blocos: 1  
 - Política de Posicionamento: Mapeamento Direto  
 - Política de Substituição de Bloco: LRU  
@@ -86,16 +86,16 @@ Na segunda varredura, como os blocos da cache já contêm os valores necessário
 
 **Parâmetros da Cache:**  
 - Níveis de Cache: 1  
-- Tamanho do Bloco: 32  
+- Tamanho do Bloco: 64 bytes  
 - Número de Blocos: 4  
 - Política de Posicionamento: Mapeamento Direto  
 - Política de Substituição de Bloco: LRU  
 
-Usando esses parâmetros, cada bloco pode armazenar **8 elementos** do vetor, pois cada elemento é um inteiro de 4 bytes e cada bloco tem tamanho de 32 bytes (**32 / 4 = 8 elementos**). Os 4 blocos da cache conseguem conter todos os 64 elementos do vetor neste cenário.  
+Usando esses parâmetros, cada bloco pode armazenar **16 elementos** do vetor, pois cada elemento é um inteiro de 4 bytes e cada bloco tem tamanho de 64 bytes (**64 / 4 = 16 elementos**). Os 4 blocos da cache conseguem conter todos os 64 elementos do vetor neste cenário.  
 
-Na **primeira varredura**, cada **miss** carrega um bloco com 8 elementos, mas devido à política de escrita e leitura a cada iteração (**Opção = 1**), ocorrem **hits** logo após o carregamento. Na **segunda varredura**, todos os elementos já estão na cache, resultando em **hits** em todas as operações.  
+Na **primeira varredura**, cada **miss** carrega um bloco com 16 elementos, mas devido à política de escrita e leitura nesta mesma iteração (**Opção = 1**) ocorre um hit, e devido como os outros elementos foram carregados no bloco ocorrem 2 **hits** (escrita e leitura) a cada elemento acessado. Na **segunda varredura**, todos os elementos já estão na cache, resultando em **hits** em todas as operações.  
 
-O **hit rate** neste cenário é **0,875**, o maior possível para o menor tamanho de bloco (8 elementos) em uma cache de 4 blocos.  
+O **hit rate** neste cenário é **0,96875**, o maior possível para o menor tamanho de bloco (16 elementos) em uma cache de 4 blocos.  
 
 # Exercício 3
 * Ordene as funções da mais rápida para a mais lenta e explique por que a classificação de cada função faz sentido com base no seu entendimento de como a cache funciona. Algumas funções podem ter tempos de execução similares. Se for esse o caso, explique por quê.
